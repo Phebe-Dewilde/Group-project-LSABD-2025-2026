@@ -1,0 +1,60 @@
+# We made a subset only consisting of label_tissue and the methylation data and only the samples containing cancer.
+```{r}  
+df_imputed <- subset(df_imputed, select = -label_title)
+df_methylation <- subset(df_methylation, select = -label_gender)
+df_methylation <- subset(df_methylation, select = -label_age)
+df_methylation <- subset(df_methylation, select = -label_disease)
+df_methylation <- subset(df_methylation, select = -label_clinical_stage)
+df_methylation <- subset(df_methylation, select = -label_site_label)
+df_methylation <- subset(df_methylation, select = -label_source_of_sample)
+df_methylation <- df_methylation[-(1:38), ]
+
+```
+# we saved the csv dataset on our computer to acces it via python
+```{r}
+write.csv(df_methylation, "redbull.csv", row.names = FALSE)
+getwd()
+
+```
+ # from this point on, we worked in google colab to use python
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import datasets
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.model_selection import train_test_split
+# Set the style for our visualizations
+sns.set_style("whitegrid")
+sns.set_palette("deep")
+%matplotlib inline
+```
+# checked if the data was correctly openend
+```{python}
+df = pd.read_csv("redbull.csv")
+df.head()
+```
+# deviding the data in features and targets
+```{python}
+X = df.drop(columns=["label_tissue"])  
+y = df["label_tissue"]  
+```
+# split the data in training data and test data
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42, stratify = y
+)
+print(f"Training set shape: {X_train.shape}")
+print(f"Testing set shape: {X_test.shape}")
+
+print(
+    f"Percent positives in training set: {y_train.value_counts(normalize=True).iloc[1]:.2f}"
+)
+print(
+    f"Percent positives in testing set: {y_test.value_counts(normalize=True).iloc[1]:.2f}"
+)
+```
+Training set shape: (198, 14205)
+Testing set shape: (86, 14205)
+Percent positives in training set: 0.33
+Percent positives in testing set: 0.34
