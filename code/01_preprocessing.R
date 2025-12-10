@@ -120,8 +120,8 @@ new_names <- ifelse(
 
 colnames(data_clean) <- new_names
 
-# Quick check
-head(colnames(data_clean))
+# Check that no genomic coordinates remain -> must be zero= mapping worked:
+sum(str_detect(colnames(data_clean), "^chr"))
 
 ## 4. Define metadata vs CpG columns ----
 
@@ -251,4 +251,5 @@ dim(df_imputed)
 # 3) Check if all original columns are present
 setdiff(colnames(df_sd_filtered), colnames(df_imputed))
 # # An empty character vector means: all columns are preserved (GOOD).
+
 
