@@ -1,0 +1,23 @@
+We made a subset only consisting of label_tissue and the methylation data
+```{r}
+#
+
+df_imputed <- subset(df_imputed, select = -label_title)
+df_methylation <- subset(df_methylation, select = -label_gender)
+df_methylation <- subset(df_methylation, select = -label_age)
+df_methylation <- subset(df_methylation, select = -label_disease)
+df_methylation <- subset(df_methylation, select = -label_clinical_stage)
+df_methylation <- subset(df_methylation, select = -label_site_label)
+df_methylation <- subset(df_methylation, select = -label_source_of_sample)
+
+
+
+df_methylation <- df_methylation[-(1:38), ]
+
+```
+save csv dataset on pc to access it via python
+```{r}
+write.csv(df_methylation, "redbull.csv", row.names = FALSE)
+getwd()
+
+```
