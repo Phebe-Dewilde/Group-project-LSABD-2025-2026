@@ -14,7 +14,7 @@ library(stringr)
 
 ## 1. Load raw data ----
 raw_data <- read_csv(
-  "C:/Users/phebe/OneDrive - UGent/Large Scale Data analysis/files/colon_stomach_lung_cancer_loyfer_zhang_weightedmean_and_metadata.csv")
+  "colon_stomach_lung_cancer_loyfer_zhang_weightedmean_and_metadata.csv")
 
 ## 2. Basic metadata cleaning ----
 
@@ -88,7 +88,7 @@ data_clean <- data_clean %>%
 ## It uses the provided BED file with promoter annotations.
 
 enhancers <- read.table(
-  "C:/Users/phebe/OneDrive - UGent/Large Scale Data analysis/files/promoter_hg38_extended.bed",
+  "promoter_hg38_extended.bed",
   header = FALSE,        # BED files typically have no header row
   sep = "\t", #BED is tab-separated
   stringsAsFactors = FALSE
@@ -251,3 +251,4 @@ dim(df_imputed)
 # 3) Check if all original columns are present
 setdiff(colnames(df_sd_filtered), colnames(df_imputed))
 # # An empty character vector means: all columns are preserved (GOOD).
+
