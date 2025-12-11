@@ -26,9 +26,9 @@ colnames(df_imputed)[colnames(df_imputed) == "label_site label"] <- "label_site_
 #rows that have unknown values or NAs for label_clinical_stage are removed.
 
 uni_df <- df_imputed[
-  !is.na(df_imputed$label_clinical_stage) &                # geen NA
-  trimws(df_imputed$label_clinical_stage) != "" &          # geen lege cellen
-  tolower(df_imputed$label_clinical_stage) != "unknown",   # geen unknown
+  !is.na(df_imputed$label_clinical_stage) &                # no NA
+  trimws(df_imputed$label_clinical_stage) != "" &          # no empty cells
+  tolower(df_imputed$label_clinical_stage) != "unknown",   # no unknown
 ]
 #check distribution of different stages 
 table(uni_df$label_clinical_stage)
@@ -150,4 +150,5 @@ ggplot(uni_df_stat, aes(
     legend.position = "none",
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
+
 
