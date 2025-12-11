@@ -1,5 +1,5 @@
 
-```{r}
+
 ## 1. Load preprocessed dataframe
 df_imputed <- read_csv("df_imputed.csv")
 
@@ -57,5 +57,4 @@ model_interactie <- glm(
   data = df_finaal,
   family = binomial
 )
-```
 summary(model_interactie)
