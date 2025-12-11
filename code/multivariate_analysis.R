@@ -33,7 +33,7 @@ top_gene
 df_finaal <- df_filtered_colon%>%
   mutate(label_site_label = recode(label_site_label, "Primary" = 0, "Metastatic" = 1, .default = NA_real_))
 
-## 8. Linear Regression Models
+## 8. Logistic Regression Models
 
 ## 8.1 Individual (No interactions)
 model_1 <- glm(
