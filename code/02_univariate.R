@@ -110,7 +110,7 @@ wilcox_res <- wilcox.test(
 wilcox_res
 
 ## 10. Visualisations ----
-# 10.1 Boxplot with jittered points (originele stijl)
+# 10.1 Boxplot with jittered points
 ggplot(uni_df_stat, aes(
   x = group,
   y = .data[[APC2_top_gene]],
@@ -130,7 +130,7 @@ ggplot(uni_df_stat, aes(
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
 
-# 10.2 Violin + boxplot + jitter (originele stijl)
+# 10.2 Violin + boxplot + jitter 
 ggplot(uni_df_stat, aes(
   x = group,
   y = .data[[APC2_top_gene]],
@@ -150,6 +150,7 @@ ggplot(uni_df_stat, aes(
     legend.position = "none",
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
+
 
 
 
