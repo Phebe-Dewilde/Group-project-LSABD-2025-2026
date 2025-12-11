@@ -11,7 +11,7 @@ library(tidyverse)
 library(stringr)
 
 ##  1. Load imputed data ----
-read.csv("data/df_imputed.csv", check.names = FALSE)
+read.csv("df_imputed.csv", check.names = FALSE)
 
 ## 2. Univariate specific metadata cleaning ----
 
@@ -150,6 +150,7 @@ ggplot(uni_df_stat, aes(
     legend.position = "none",
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
+
 
 
 
