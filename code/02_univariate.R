@@ -39,11 +39,7 @@ df_filtered_colon <- uni_df %>%
                              "Colon"))
 
 ## 4. Choose a gene for univariate analysis ----
-# Option 1: top variable gene overall (ultimately not chosen to be used in report, but kept for reference)
-variances <- apply(genes_only, 2, var)
-top_gene_overall <- names(which.max(variances))
-
-# Option 2: restrict to APC-related CpGs= biologial relevance (as described in the report)
+# Restrict to APC-related CpGs= biologial relevance (as described in the report)
 
 apc_cols <- grep("^APC_", names(df_filtered_colon), value = TRUE)
 grep("APC", names(df_filtered_colon), value = TRUE)
@@ -150,5 +146,6 @@ ggplot(uni_df_stat, aes(
     legend.position = "none",
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
+
 
 
