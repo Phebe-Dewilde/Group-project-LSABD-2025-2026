@@ -111,7 +111,7 @@ y = "Age"
 ) +
 theme_minimal()
 
-## 10.3 
+## 10.3 Heatmap
 library(ggplot2)
 
 plotdata <- expand.grid(
