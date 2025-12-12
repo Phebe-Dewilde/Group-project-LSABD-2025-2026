@@ -1,4 +1,4 @@
-# Group-6-project-methylomics-LSABD-2025-2026
+# Group6-project_methylomics-LSABD-2025-2026
 ## Project Overview
 
 This repository contains the code, notebooks, and results for the LSABD group project (2025–2026) on the methylomics dataset.
