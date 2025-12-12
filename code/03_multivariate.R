@@ -112,8 +112,6 @@ y = "Age"
 theme_minimal()
 
 ## 10.3 Heatmap
-library(ggplot2)
-
 plotdata <- expand.grid(
   HOXB6_1 = seq(min(df_finaal$HOXB6_1), max(df_finaal$HOXB6_1), length.out = 100),
   label_age = seq(min(df_finaal$label_age), max(df_finaal$label_age), length.out = 100)
