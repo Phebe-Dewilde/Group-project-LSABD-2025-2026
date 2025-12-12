@@ -10,7 +10,8 @@ colnames(df_imputed)[colnames(df_imputed) == "label_site label"] <- "label_site_
 ## 3. Remove non-informative rows
 df_clean <- df_imputed[
   !(df_imputed$label_age == "unknown" |
-    is.na(df_imputed$`label_site_label`)), 
+    is.na(df_imputed$label_site_label) |
+    is.na(df_imputed$label_gender)), 
 ]
 
 ## 4. Filter for colon samples
