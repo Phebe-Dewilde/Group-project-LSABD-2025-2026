@@ -1,4 +1,5 @@
-
+RQ: Is colorectal cancer metastasis status associated with patient age, gender and differential methylation of the HOXB6_1 promoter region?
+Hypothesis: 
 
 ## 1. Load preprocessed dataframe
 df_imputed <- read_csv("df_imputed.csv")
