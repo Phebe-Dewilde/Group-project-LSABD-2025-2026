@@ -62,7 +62,7 @@ data_clean <- data_clean %>%
   ) %>%
   mutate(
     label_source_of_sample = case_when(
-      label_source_of_sample %in% c("lymph_node", "lymphnode", "lymph_nodes") ~ "lymph_node",
+      label_source_of_sample %in% c("lymph_node", "lymphnode", "lymph_nodes") ~ "Lymph_node",
       TRUE ~ label_source_of_sample
     )
   )
@@ -279,6 +279,7 @@ dim(df_imputed)
 # 3) Check if all original columns are present
 setdiff(colnames(df_sd_filtered), colnames(df_imputed))
 # # An empty character vector means: all columns are preserved (GOOD).
+
 
 
 
