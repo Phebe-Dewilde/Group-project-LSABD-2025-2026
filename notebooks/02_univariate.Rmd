@@ -2,10 +2,10 @@
 title: "Univariate Analysis – APC2 Methylation in Colon Samples"
 output: html_notebook
 
-RQ: Does promoter methylation of APC2_1 differ between stage 0 (healthy) and stage IV colon cancers?
-Hypotheses:
-- H0: Promoter methylation of APC2_1 does not differ between stage 0 (healthy) and stage IV colon cancers.
-- H1: Promoter methylation of APC2_1 differs between stage 0 (healthy) and stage IV colon cancers.
+# RQ: Does promoter methylation of APC2_1 differ between stage 0 (healthy) and stage IV colon cancers?
+# Hypotheses:
+#- H0: Promoter methylation of APC2_1 does not differ between stage 0 (healthy) and stage IV colon cancers.
+#- H1: Promoter methylation of APC2_1 differs between stage 0 (healthy) and stage IV colon cancers.
 
 ---
 0. Load packages ----
@@ -175,6 +175,7 @@ ggplot(uni_df_stat, aes(
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
 ```
+
 
 
 
