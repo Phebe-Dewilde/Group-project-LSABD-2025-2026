@@ -123,7 +123,7 @@ plotdata <- expand.grid(
 plotdata$pred_prob <- predict(
   glm(label_site_label ~ label_age + HOXB6_1, 
       family = binomial, data = df_finaal),
-  newdata = newdata, type = "response"
+  newdata = plotdata, type = "response"
 )
 
 ggplot(plotdata, aes(x = HOXB6_1, y = label_age, z = pred_prob)) +
