@@ -1,0 +1,238 @@
+---
+title: "Multivariate analysis"
+output: html_notebook
+---
+
+# RQ: Is colorectal cancer metastasis status associated with patient age, gender and differential methylation of the HOXB6_1 promoter region?
+# Hypothesis: Age, gender and HOXB6_1 methylation levels are associated with metastasis status in colorectal cancer patients.
+
+0. Load packages ----
+```{r}
+library(tidyverse)
+library(car)
+```
+
+1. Load imputed data ----
+
+The aim of this multivariate analysis is to investigate whether age, gender and HOXB6_1 methylation levels are associated with metastasis status (Primary vs Metastatic) in colorectal cancer patients. 
+HOXB6_1 possesses a highly variable methylation profile (see section 5), suggesting an enhanced predictive power.
+```{r}
+df_imputed <- read_csv("df_imputed.csv")
+```
+
+2. Multivariate specific metadata cleaning ----
+
+2.1 Cleaning up column names by adding underscores -> was overlooked during the general preprocessing
+```{r}
+colnames(df_imputed)[colnames(df_imputed) == "label_clinical stage"] <- "label_clinical_stage"
+colnames(df_imputed)[colnames(df_imputed) == "label_site label"] <- "label_site_label"
+```
+
+2.2. Removal of "NAs" and "Unknowns" in label_site_label, label_gender and label_age columns.
+Since the features label_age and label_gender are considered for the multivariate analysis and label_site_label is the outcome variable, rows that have missing or unknown values for these features are removed.
+```{r}
+df_clean <- df_imputed[
+  !(df_imputed$label_age == "unknown" |
+    is.na(df_imputed$label_site_label) |
+    is.na(df_imputed$label_gender)), 
+] 
+```
+
+3. Restrict to colorectal samples ----
+
+In order to maintain consistency with the univariate analysis, we restrict our dataset to colorectal cancer samples.
+Only samples with label_tissue == "Colon_and_rectum_cancer" are kept.
+```{r}
+df_filtered_colon <- df_clean %>%
+  filter(label_tissue == "Colon_and_rectum_cancer")
+```
+
+4. Exploration of age-grouping ----
+
+We explored age-grouping as a means to enhance the predictive power of label_age. To this end, we first changed the variable type of label_age from "character" to "numeric". 
+Because equal-sized age groups differed greatly in the number of allocated patients and other age-grouping attempts seemed irrelevant, we ultimately abandoned this idea.
+```{r}
+df_filtered_colon$label_age <- as.numeric(as.character(df_filtered_colon$label_age))
+```
+
+```{r}
+df_filtered_colon$leeftijd_cat <- cut(
+  df_filtered_colon$label_age,
+  breaks = c(27, 43, 59, 75, 91),
+  labels = c("27-43", "44-59", "60-75", "76-91"),
+  right = TRUE,
+  include.lowest = TRUE
+)
+
+table(df_filtered_colon$leeftijd_cat)
+```
+
+5. Selection of relevant gene for multivariate analysis ----
+
+As discussed in the report, we reasoned that genes displaying high methylation variability posses increased predicitve power relative to genes with lower variability.
+We created a new dataframe containing only methylation beta values, from which the most variable methylation profile across patients was selected (= HOXB6_1). 
+We initially explored selecting the 10 most variable methylation profiles, but decided against this to reduce analytical complexity, acknowledging a potential reduction in model generalizability.
+```{r}
+genes_only <- df_filtered_colon[, -(1:8)]
+dim(genes_only)
+variances <- apply(genes_only, 2, var)
+top_gene <- names(which.max(variances))
+top_gene
+```
+
+6. Logistic regression model ----
+
+Since our outcome variable is binary (Primary vs Metastatic) we opted to use a logistic regression model. Normality was not assessed, as it is not a required assumption of logistic regression.
+
+6.1 Binary recoding - Recode outcome variable to numerical binary format.
+Our outcome variable (label_site_label) is recoded to true numerical binary, with 0 representing a Primary site cancer sample and 1 representing Metastatic cancer sample.
+```{r}
+df_finaal <- df_filtered_colon%>%
+  mutate(label_site_label = dplyr::recode(label_site_label, "Primary" = 0, "Metastatic" = 1, .default = NA_real_))
+```
+
+6.2 Linearity of continuous predictors
+In order to check the linearity of the continuous predictors with the log-odds, we employed a Box-Tidwell statistical test. For binary predictors such as label_gender, the linearity assumption is inherently valid and therefore does not require testing.
+A p-value > 0.05 for the interaction terms suggests no evidence of non-linearity, meaning the linearity assumption is met.
+```{r}
+df_tested <- df_finaal %>% 
+  select(label_site_label, label_age, label_gender, HOXB6_1)
+
+df_tested$label_age <- df_tested$label_age + abs(min(df_tested$label_age)) + 0.01
+df_tested$HOXB6_1 <- df_tested$HOXB6_1 + abs(min(df_tested$HOXB6_1)) + 0.01
+
+model_tested <- glm(
+  label_site_label ~ label_age + HOXB6_1 +
+    label_age:log(label_age) + HOXB6_1:log(HOXB6_1),
+  family = binomial,
+  data = df_tested
+)
+summary(model_tested)
+```
+Since the interaction terms for label_age and HOXB6_1 yielded p-values greater than 0.05 (p=0.225 and p=0.761 respectively), the linearity assumption is met.
+
+6.3 Absence of multicollinearity and AIC scores
+In order to check the abscence of multicollinearity between predictors, we observed the Variance Inflation factor (VIF). A low VIF indicates that a predictor is minimally correlated with the other predictors, supporting the assumption of low multicollinearity.
+The Akaike Information Criterion value (AIC value) displayed in the model summary balances model fit and complexity (number of predictors), thereby evaluating the risk of overfitting. A model exhibiting a lower AIC value achieves a better balance between fit and complexity relative to models with higher AIC values. Only the relative difference between AIC values is meaningful for selecting the best model.
+```{r}
+model_1 <- glm(
+  label_site_label ~ label_age + label_gender + HOXB6_1,
+  data = df_finaal,
+  family = binomial
+)
+
+summary(model_1)
+vif(model_1)
+```
+Given the low VIF scores, there is no evidence of problematic multicollinearity.
+Since label_gender was not statistically significant (p=0.577), we trained a second model, omitting this predictor.
+
+```{r}
+model_2 <- glm(
+  label_site_label ~ label_age  + HOXB6_1,
+  data = df_finaal,
+  family = binomial
+)
+
+summary(model_2)
+vif(model_2)
+```
+Once again, the low VIF scores suggest that multicollinearity is not present. HOXB6_1 methylation shows significant association (p=0.000105) with label_site_label, while label_age shows borderline significance.
+With an AIC value difference of only 1.689 between the two models, both models can be considered roughly equivalent.
+A third model was developed to examine the contributions of the interaction terms. 
+
+```{r}
+model_interactie <- glm(
+  label_site_label ~ label_age * HOXB6_1 + label_age + HOXB6_1 + label_gender + label_gender*label_age + label_gender*HOXB6_1,
+  data = df_finaal,
+  family = binomial
+)
+
+summary(model_interactie)
+vif(model_interactie)
+```
+Although high VIF values are expected in models with interaction terms, interpretation should be context-dependent. Given that no predictors reach statistical significance, model_2 is considered the best choice.
+
+7. Visualisations ----
+
+7.1 Histogram
+
+First, a histogram of HOXB6_1 methylation (divided into 30bins) was generated, clearly indicating the presence of two separate groups.
+```{r}
+library(ggplot2)
+
+ggplot(df_finaal, aes(x = HOXB6_1)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black") +
+  labs(
+    title = "Distribution of HOXB6_1",
+    x = "HOXB6_1 methylation",
+    y = "Frequency"
+  )
+```
+
+7.2 Violin plots
+
+The violin plots illustrate the full density distribution of the predictor for each outcome group.
+
+7.2.1 HOXB6_1 violin plot
+```{r}
+ggplot(df_finaal, aes(x = factor(label_site_label), y = HOXB6_1, fill = factor(label_site_label))) +
+  geom_violin(alpha = 0.6) +
+  geom_boxplot(width = 0.1, color = "black") +
+  scale_x_discrete(labels = c("0" = "Primary", "1" = "Metastatic")) +
+  scale_fill_manual(values = c("0" = "lightcoral", "1" = "turquoise"),
+                    labels = c("Primary", "Metastatic"), name = 'Metastasis status') +
+  labs(
+    title = "HOXB6_1 methylation per metastasis status",
+    x = "Metastasis status",
+    y = "HOXB6_1 methylation"
+  ) +
+  theme_minimal()
+```
+The violin plots reveal a clear difference between the two outcome groups, with metastatic colorectal cancer samples exhibiting significantly lower HOXB6_1 methylation compared to primary colorectal cancer samples. 
+
+7.2.2 Age violin plot
+```{r}
+ggplot(df_finaal, aes(x = factor(label_site_label), y = label_age, fill = factor(label_site_label))) +
+geom_violin(alpha = 0.6) +
+geom_boxplot(width = 0.1, color = "black") +
+scale_x_discrete(labels = c("0" = "Primary", "1" = "Metastatic")) +
+scale_fill_manual(values = c("0" = "lightcoral", "1" = "turquoise"),
+labels = c("Primary", "Metastatic"),
+name = 'Metastasis status') +
+labs(
+title = "Age per metastasis status",
+x = "Metastasis status",
+y = "Age"
+) +
+theme_minimal()
+```
+Both distributions display a similar shape and considerable overlap, reflecting the borderline significant p-value for label_age.
+
+7.3 Heatmap
+
+Lastly, a heatmap represents the predicted probability of metastasis based on HOXB6_1 methylation profile and age. We observe that the highest predicted probabilities of metastasis occur in younger patients with low HOXB6_1 methylation levels. 
+```{r}
+plotdata <- expand.grid(
+  HOXB6_1 = seq(min(df_finaal$HOXB6_1), max(df_finaal$HOXB6_1), length.out = 100),
+  label_age = seq(min(df_finaal$label_age), max(df_finaal$label_age), length.out = 100)
+)
+
+plotdata$pred_prob <- predict(
+  glm(label_site_label ~ label_age + HOXB6_1, 
+      family = binomial, data = df_finaal),
+  newdata = plotdata, type = "response"
+)
+
+ggplot(plotdata, aes(x = HOXB6_1, y = label_age, z = pred_prob)) +
+  geom_tile(aes(fill = pred_prob)) +
+  geom_contour(color = "white", alpha = 0.7) +
+  scale_fill_viridis_c(name = "Predicted probability of metastasis") +
+  labs(
+    x = "HOXB6 methylation (beta value)",
+    y = "Age",
+    title = "Predicted probability of metastasis based on HOXB6 and age"
+  ) +
+  theme_minimal()
+```
+
