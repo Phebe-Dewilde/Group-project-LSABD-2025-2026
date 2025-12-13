@@ -801,10 +801,10 @@ param_grid_lr = {
 # Other solvers like lbfgs, newton-cg, sag are only for l2 or none
 # De lijn hierboven is de correctie: '# solver': ['liblinear', 'saga'] is verwijderd
 
-# 2. Initialiseer Logistic Regression model
+# 2. Initialise Logistic Regression model
 log_reg_base = LogisticRegression(max_iter=1000, random_state=42)
 
-# 3. Initialiseer GridSearchCV
+# 3. Initialise GridSearchCV
 grid_search_lr = GridSearchCV(
     estimator=log_reg_base,
     param_grid=param_grid_lr,
