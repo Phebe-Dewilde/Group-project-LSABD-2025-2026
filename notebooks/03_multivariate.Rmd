@@ -15,7 +15,7 @@ library(car)
 1. Load imputed data ----
 
 The aim of this multivariate analysis is to investigate whether age, gender and HOXB6_1 methylation levels are associated with metastasis status (Primary vs Metastatic) in colorectal cancer patients. 
-HOXB6_1 possesses a highly variable methylation profile (see section 5), suggesting an enhanced predictive power.
+HOXB6_1 possesses a highly variable methylation profile (see section 5), which may increase discriminatory power.
 ```{r}
 df_imputed <- read_csv("df_imputed.csv")
 ```
@@ -69,7 +69,7 @@ table(df_filtered_colon$leeftijd_cat)
 
 5. Selection of relevant gene for multivariate analysis ----
 
-As discussed in the report, we reasoned that genes displaying high methylation variability posses increased predicitve power relative to genes with lower variability.
+As discussed in the report, we reasoned that genes displaying high methylation variability may posses increased discriminatory power relative to genes with lower variability.
 We created a new dataframe containing only methylation beta values, from which the most variable methylation profile across patients was selected (= HOXB6_1). 
 We initially explored selecting the 10 most variable methylation profiles, but decided against this to reduce analytical complexity, acknowledging a potential reduction in model generalizability.
 ```{r}
@@ -92,14 +92,14 @@ df_finaal <- df_filtered_colon%>%
 ```
 
 6.2 Linearity of continuous predictors
-In order to check the linearity of the continuous predictors with the log-odds, we employed a Box-Tidwell statistical test. For binary predictors such as label_gender, the linearity assumption is inherently valid and therefore does not require testing.
+We assessed linearity in the logit for continuous predictors using a Box-Tidwell-type approach. For binary predictors such as label_gender, the linearity assumption is inherently valid and therefore does not require testing.
 A p-value > 0.05 for the interaction terms suggests no evidence of non-linearity, meaning the linearity assumption is met.
 ```{r}
 df_tested <- df_finaal %>% 
   select(label_site_label, label_age, label_gender, HOXB6_1)
 
-df_tested$label_age <- df_tested$label_age + abs(min(df_tested$label_age)) + 0.01
-df_tested$HOXB6_1 <- df_tested$HOXB6_1 + abs(min(df_tested$HOXB6_1)) + 0.01
+df_tested$label_age <- df_tested$label_age + abs(min(df_tested$label_age)) + 0.01  #Box-Tidwell test requires positive values
+df_tested$HOXB6_1 <- df_tested$HOXB6_1 + abs(min(df_tested$HOXB6_1)) + 0.01  #Box-Tidwell test requires positive values
 
 model_tested <- glm(
   label_site_label ~ label_age + HOXB6_1 +
@@ -151,7 +151,7 @@ model_interactie <- glm(
 summary(model_interactie)
 vif(model_interactie)
 ```
-Although high VIF values are expected in models with interaction terms, interpretation should be context-dependent. Given that no predictors reach statistical significance, model_2 is considered the best choice.
+Although high VIF values are expected in models with interaction terms, interpretation should be context-dependent. As no predictors were statistically significant in the exploratory interaction model, it was discarded and model_2 was selected as the best-fitting model.
 
 7. Visualisations ----
 
