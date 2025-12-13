@@ -1,7 +1,11 @@
 ---
-title: "R Notebook"
+title: "Multivariate analysis"
 output: html_notebook
 ---
+
+# RQ: Is colorectal cancer metastasis status associated with patient age, gender and differential methylation of the HOXB6_1 promoter region?
+# Hypothesis: Age, gender and HOXB6_1 methylation levels are associated with metastasis status in colorectal cancer patients.
+
 0. Load packages ----
 ```{r}
 library(tidyverse)
@@ -10,7 +14,7 @@ library(car)
 
 1. Load imputed data ----
 
-The aim of this multivariate analysis is to investigate whether age, gender and HOXB6_1 methylation levels can serve as predictors of metastasis status (Primary vs Metastatic) in colorectal cancer patients. 
+The aim of this multivariate analysis is to investigate whether age, gender and HOXB6_1 methylation levels are associated with metastasis status (Primary vs Metastatic) in colorectal cancer patients. 
 HOXB6_1 possesses a highly variable methylation profile (see section 5), suggesting an enhanced predictive power.
 ```{r}
 df_imputed <- read_csv("df_imputed.csv")
@@ -133,7 +137,7 @@ model_2 <- glm(
 summary(model_2)
 vif(model_2)
 ```
-Once again, the low VIF scores suggest that multicollinearity is not present. HOXB6_1 methylation shows high predictive power (p=0.000105) for label_site_label, while label_age shows borderline significance.
+Once again, the low VIF scores suggest that multicollinearity is not present. HOXB6_1 methylation shows significant association (p=0.000105) with label_site_label, while label_age shows borderline significance.
 With an AIC value difference of only 1.689 between the two models, both models can be considered roughly equivalent.
 A third model was developed to examine the contributions of the interaction terms. 
 
