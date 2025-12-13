@@ -226,8 +226,36 @@ df_sd_filtered <- df_filtered[, c(meta_cols, genes_keep_sd)]
 ## 8. Export dataset for KNN imputation in Python ----
 
 # This file will be used in a Python/Colab notebook for KNN imputation.
-# See: 00_knn_imputation.py (or the Colab notebook) for details.
+
 write_csv(df_sd_filtered, "df_sd_filtered.csv")
+
+```{python}
+from google.colab import drive
+drive.mount('/content/drive')
+
+import pandas as pd
+
+file_path ='/content/drive/MyDrive/Colab_Notebooks/df_sd_filtered.csv'
+df = pd.read_csv(file_path)
+
+metadata_cols = ['label_title', 'label_tissue', 'label_age', 'label_gender',
+                 'label_clinical stage', 'label_site label',
+                 'label_source_of_sample', 'label_disease']
+
+chrom_cols = [col for col in df.columns if col not in metadata_cols]
+
+metadata_df = df[metadata_cols]
+chrom_df = df[chrom_cols]
+
+from sklearn.impute import KNNImputer
+imputer = KNNImputer(n_neighbors=5)
+chrom_imputed = imputer.fit_transform(chrom_df)
+
+chrom_imputed_df = pd.DataFrame(chrom_imputed, columns=chrom_cols)
+df_imputed = pd.concat([metadata_df.reset_index(drop=True), chrom_imputed_df], axis=1)
+
+df_imputed.to_csv('df_imputed.csv', index=False)
+```
 
 ## 9. (Optional) Post-imputation checks in R ----
 ## After running KNN imputation in Python, you will get 'df_imputed.csv'.
@@ -251,5 +279,6 @@ dim(df_imputed)
 # 3) Check if all original columns are present
 setdiff(colnames(df_sd_filtered), colnames(df_imputed))
 # # An empty character vector means: all columns are preserved (GOOD).
+
 
 
