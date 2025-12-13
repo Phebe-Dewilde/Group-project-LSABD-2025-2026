@@ -5,6 +5,20 @@ This repository contains the code, notebooks, and results for the LSABD group pr
 The goal of this project is to perform data preprocessing, exploratory data analysis, multivariate analysis, and machine learning on the provided methylomics datasets on UFORA.
 All analyses are presented in executed notebooks, including figures and outputs, so no rerunning is required for evaluation.
 
+## Research questions/ objectives
+
+This project addresses the following research questions:
+
+1. **Univariate analysis**  
+   Does promoter methylation of APC2_1 differ between stage 0 (healthy) and stage IV colon cancers?
+
+2. **Multivariate analysis**  
+   Is colorectal cancer metastasis status associated with patient age, gender and differential methylation of the HOXB6_1 promoter?
+
+3. **Machine learning objective**  
+   Can tumour type (colon/rectum, stomach, lung) be predicted from DNA methylation profiles?
+
+
 ## Repository Structure
 ### Data Availability
 
