@@ -11,7 +11,7 @@ df_methylation <- subset(df_methylation, select = -label_site_label)
 df_methylation <- subset(df_methylation, select = -label_source_of_sample)
 
 
-
+# Remove the first 38 rows (healthy samples not included in classification)
 df_methylation <- df_methylation[-(1:38), ]
 
 ```
@@ -21,3 +21,4 @@ write.csv(df_methylation, "redbull.csv", row.names = FALSE)
 getwd()
 
 ```
+
