@@ -78,6 +78,7 @@ model_interactie <- glm(
   family = binomial
 )
 summary(model_interactie)
+vif(model_interactie)
 
 ## 10. Visualisations
 
