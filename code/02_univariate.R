@@ -6,8 +6,10 @@
 ## - compare methylation between stage 0 and stage IV
 ## - generate summary statistics and plots
 
-# RQ: Does promoter methylation of APC2_1 differ between stage 0 (healthy) and stage IV colon cancers?
-# Hypothesis: H0: APC2_1 promoter methylation does not differ between stage 0 and stage IV.
+## RQ: Does promoter methylation of APC2_1 differ between stage 0 (healthy) and stage IV colon cancers?
+## Hypotheses:
+### H0: Promoter methylation of APC2_1 does not differ between stage 0 (healthy) and stage IV colon cancers.
+### H1: Promoter methylation of APC2_1 differs between stage 0 (healthy) and stage IV colon cancers.
 
 ## 0. Load packages ----
 library(tidyverse)
@@ -128,6 +130,7 @@ ggplot(uni_df_stat, aes(
     legend.position = "none",
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
+
 
 
 
