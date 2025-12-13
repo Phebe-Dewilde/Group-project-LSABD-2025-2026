@@ -6,6 +6,9 @@
 ## - compare methylation between stage 0 and stage IV
 ## - generate summary statistics and plots
 
+# RQ: Does promoter methylation of APC2_1 differ between stage 0 (healthy) and stage IV colon cancers?
+# Hypothesis: H0: APC2_1 promoter methylation does not differ between stage 0 and stage IV.
+
 ## 0. Load packages ----
 library(tidyverse)
 library(stringr)
@@ -82,7 +85,7 @@ uni_summary <- uni_df_stat %>%
 
 uni_summary
 
-## 8. Outlier inspection (visual only)
+## 8. Outlier inspection (visual only) ----
 
 # Outliers were inspected visually using boxplots.
 # Because methylation beta-values represent biological variability and
@@ -126,26 +129,6 @@ ggplot(uni_df_stat, aes(
     plot.title = element_text(face = "bold", hjust = 0.5)
   )
 
-# 10.2 Violin + boxplot + jitter 
-ggplot(uni_df_stat, aes(
-  x = group,
-  y = .data[[APC2_top_gene]],
-  fill = group
-)) +
-  geom_violin(trim = TRUE, alpha = 0.4, color = NA) +
-  geom_boxplot(width = 0.15, outlier.shape = NA, alpha = 0.7) +
-  geom_jitter(width = 0.08, alpha = 0.6, size = 2, color = "black") +
-  scale_fill_manual(values = c("#6AAED6", "#CC4C4C")) +
-  labs(
-    title = paste("Methylation of", APC2_top_gene, "in Stage 0 vs Stage IV"),
-    x = "Clinical stage",
-    y = "Methylation (beta-value)"
-  ) +
-  theme_bw(base_size = 13) +
-  theme(
-    legend.position = "none",
-    plot.title = element_text(face = "bold", hjust = 0.5)
-  )
 
 
 
